@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Who?</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #ffe4ea;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* =========================
+           AMPLOP
+        ========================= */
+
+        .amplop {
+            width: min(300px, 85vw);
+            height: min(200px, 56.67vw);
+            background: rgb(253, 114, 137);
+            position: relative;
+            margin: 100px auto;
+            overflow: visible;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        /* Bagian depan amplop */
+        .amplop::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+
+            border-left: calc(min(300px, 85vw) / 2) solid transparent;
+            border-right: calc(min(300px, 85vw) / 2) solid transparent;
+            border-bottom: calc(min(200px, 56.67vw) / 2) solid rgb(253, 114, 137);
+
+            z-index: 3;
+        }
+
+        /* Tutup amplop */
+        .tutup {
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            width: 0;
+            height: 0;
+
+            border-left: calc(min(300px, 85vw) / 2) solid transparent;
+            border-right: calc(min(300px, 85vw) / 2) solid transparent;
+            border-top: calc(min(200px, 56.67vw) / 2) solid pink;
+
+            z-index: 5;
+
+            transform-origin: top center;
+            transition: transform 0.8s ease;
+        }
+
+        .amplop.open .tutup {
+            transform: rotateX(180deg);
+        }
+
+        #hati {
+            position: absolute;
+            left: -20px;
+            bottom: -60px;
+            color: rgb(237, 30, 99);
+            font-size: clamp(28px, 10vw, 40px);
+
+            z-index: 10;
+        }
+
+        #buka {
+            position: absolute;
+
+            left: 50%;
+            top: 100px;
+
+            transform: translateX(-50%);
+
+            font-family: cursive;
+            font-size: 16px;
+
+            color: black;
+            background-color: pink;
+
+            border: none;
+            border-radius: 8px;
+
+            padding: 12px 30px;
+
+            cursor: pointer;
+
+            z-index: 20;
+
+            transition: transform 0.2s ease;
+        }
+
+        #buka:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+
+        .halaman {
+            width: min(250px, 90vw);
+            height: 350px;
+
+            position: relative;
+            margin: 50px auto;
+
+            border: 2px solid white;
+
+            background: rgb(254, 134, 154);
+
+            overflow-y: auto;
+
+            display: none;
+
+            padding: 10px;
+
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .halaman.show {
+            display: block;
+
+            animation: muncul 1s ease forwards;
+        }
+
+        @keyframes muncul {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #untuk {
+            font-family: Arial;
+            margin: 5px;
+        }
+
+        .isi {
+            margin: 10px;
+
+            font-family: Arial;
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+        #lanjut {
+            padding: 10px 20px;
+
+            background-color: rgb(253, 92, 119);
+
+            border: none;
+            border-radius: 5px;
+
+            font-family: Arial;
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+        .surat {
+            width: min(250px, 90vw);
+            height: 350px;
+
+            position: relative;
+            margin: 50px auto;
+
+            border: 2px solid white;
+
+            background: rgb(254, 134, 154);
+
+            overflow: hidden;
+
+            display: none;
+
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .surat.show {
+            display: block;
+
+            animation: suratMuncul 0.8s ease forwards;
+        }
+
+        @keyframes suratMuncul {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #To {
+            font-family: cursive;
+            font-size: 15px;
+
+            color: black;
+
+            margin-left: 10px;
+        }
+
+        #confess {
+            font-family: cursive;
+            font-size: 17px;
+
+            color: black;
+
+            margin-left: 30px;
+            margin-top: 40px;
+        }
+
+        #yes,
+        #no {
+            position: absolute;
+
+            top: 270px;
+
+            font-family: cursive;
+            font-size: 16px;
+
+            color: black;
+            background-color: pink;
+
+            border: none;
+            border-radius: 5px;
+
+            padding: 15px 30px;
+
+            cursor: pointer;
+        }
+
+        #yes {
+            left: 20px;
+        }
+
+        #no {
+            left: 140px;
+        }
+
+        #gif {
+            position: absolute;
+
+            left: 60px;
+            bottom: 100px;
+        }
+        .lembaryes{
+        width: 250px;
+        height: 350px;
+        position: relative;
+        margin: 50px auto;
+        border: 2px solid rgb(254, 253, 253);
+        background: rgb(254, 134, 154);
+        overflow: hidden;
+        box-sizing: border-box;
+        }
+        #yeay{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 20px;
+        color: black;
+        position: relative;
+        left: 20px;
+        top: 15px;
+        }
+        #bahagia{
+        position: relative;
+        left: 42px;
+        top: 20px;
+        }
+        #lopyu{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        position: relative;
+        top: -5px;
+        left: 11px;
+        font-size: 25px;
+        }
+        .lembarno{
+        width: 250px;
+        height: 350px;
+        position: relative;
+        margin: 50px auto;
+        border: 2px solid rgb(254, 253, 253);
+        background: rgb(254, 134, 154);
+        overflow: hidden;
+        box-sizing: border-box;
+        }
+        #yahh{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 20px;
+        color: black;
+        position: relative;
+        left: 24px;
+        top: 15px;
+        }
+        #sedih{
+        position: relative;
+        left: 42px;
+        top: 20px;
+        }
+        #nanges{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        position: relative;
+        top: -5px;
+        left: 27px;
+        font-size: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="amplop" id="amplop">
+
+        <div class="tutup">
+
+            <p id="hati">❤︎</p>
+
+            <button id="buka">
+                Open
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="halaman" id="halaman">
+
+        <p id="untuk">
+            To: Cori
+        </p>
+
+        <div class="isi">
+
+            <p>
+                Cori aku pertama bertemu dengan mu di kelas 7 dan aku langsung
+                terpikat oleh senyum manismu, kurang lebih 5 tahun lalu ntah kau
+                menyadarinya atau tidak aku jatuh cinta pada mu untuk pertama
+                kalinya.
+
+                <br><br>
+
+                Perlu 5 tahun bagiku untuk memberanikan menuliskan surat ini.
+                Ku harap semua isi hati ku dapat ku tulis di dalam surat ini.
+
+                <br><br>
+
+                Saat kelas 9 ada suatu kejadian yang membuat satu kelas dan kau
+                mengetahui perasaan yang ku pendam. Sejak kejadian itu aku merasa
+                malu atau tidak enak kepadamu karena aku merasa diri ku tidak
+                cocok dengan mu.
+
+                <br><br>
+
+                Itulah yang membuatku menghindar atau pergi saat ada kau di
+                dekatku.
+
+                <br><br>
+
+                Tapi kali ini aku sudah tidak tahan memendam perasaan yang sudah
+                sangat lama ingin ku katakan ini.
+
+                <br><br>
+
+                Aku memberanikan diri untuk menyatakan perasaan ku pada mu.
+
+                <br><br>
+
+                Aku memutuskan membuat ini untuk menyatakan perasaan yang telah
+                lama ku pendam itu di dalam web ini.
+
+                <br><br>
+
+                Alasan aku memilih membuat web ini daripada mengatakan perasaan
+                ku langsung kepadamu karena ini adalah hobiku.
+
+                <br><br>
+
+                Aku berpikir lebih baik jika aku menyatakan perasaan ku padamu
+                dalam bentuk hobiku jadi hobiku terisi dan perasaan ku
+                tersampaikan kepadamu.
+
+                <br><br>
+
+                Web ini ku buat dengan penuh rasa cinta. Tidak hanya sekedar
+                template atau meminta bantuan AI karena aku ingin menyampaikan
+                perasaan cintaku secara murni.
+
+                <br><br>
+
+                Aku berusaha memahami bahasa pemrograman baru, tag-tag
+                pemrograman baru dan masih banyak lagi.
+
+                <br><br>
+
+                Web ini kubuat untuk menyatakan rasa cintaku kepadamu dan
+                meminta maaf pada mu atas apa yang terjadi saat kelas 9 dulu.
+
+                <br><br>
+
+                Aku masih merasa tidak enak kepadamu karena aku menyimpan
+                banyak foto mu dari screenshot story sampai foto kelas yang ku
+                crop sampai tersisa wajahmu saja.
+
+                <br><br>
+
+                Aku ingin meminta maaf kepadamu dan ku harap kau mau
+                memaafkanku.
+
+                <br><br>
+
+                Alasan aku menyimpan foto-foto mu karena tiap aku melihat
+                senyummu aku selalu terpukau.
+
+                <br><br>
+
+                Maaf yaa.
+
+                <br><br>
+
+                Sepertinya itu saja yang ingin aku ucapkan.
+
+                <br><br>
+
+                Semoga kau suka dengan web buatan ku.
+
+                <br><br>
+
+                Kalau bisa suka sama yang buatnya juga yaaa.
+
+                <br><br>
+
+                Ada satu hal yang ingin aku tanyakan padamu.
+
+                <br><br>
+
+                Coba kamu tekan lanjut di bawah.
+            </p>
+
+
+            <button id="lanjut">
+                Lanjut
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="surat" id="surat">
+
+        <p id="To">
+            To: Cori
+        </p>
+
+        <p id="confess">
+            Cori Do you Love me too?
+        </p>
+
+        <button id="yes">
+            Yes
+        </button>
+
+        <button id="no">
+            No
+        </button>
+
+        <div id="gif">
+            <img src="gif.gif" alt="lopyu" width="130">
+        </div>
+
+    </div>
+    <div class="lembaryes">
+        <div>
+            <p id="yeay">Yeayy aku di terima coriii</p>
+            <div id="bahagia">
+                <img src="bahagia.gif" alt="bahagia" width="160">
+                <div>
+                    <p id="lopyu">Lopyu corii❤️</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="lembarno">
+        <div>
+            <p id="yahh">yahh aku di tolak cori ;) </p>
+            <div id="sedih">
+                <img src="sedih.gif" alt="sedih" width="160">
+                <div>
+                    <p id="nanges">huhuhu 😭</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const amplop = document.getElementById("amplop");
+        const tombolBuka = document.getElementById("buka");
+        const halaman = document.getElementById("halaman");
+        const tombolLanjut = document.getElementById("lanjut");
+        const surat = document.getElementById("surat");
+        const lembaryes = document.querySelector(".lembaryes");
+        const lembarno = document.querySelector(".lembarno");
+        const tombolYes = document.getElementById("yes");
+        const tombolNo = document.getElementById("no");
+
+        tombolBuka.addEventListener("click", function () {
+
+            amplop.classList.add("open");
+
+            tombolBuka.style.opacity = "0";
+            tombolBuka.style.pointerEvents = "none";
+
+            setTimeout(function () {
+
+                amplop.style.display = "none";
+                halaman.classList.add("show");
+
+            }, 1000);
+
+        });
+
+        tombolLanjut.addEventListener("click", function () {
+
+            halaman.style.display = "none";
+
+            surat.classList.add("show");
+
+        });
+
+        lembaryes.style.display = "none";
+        lembarno.style.display = "none";
+
+        tombolYes.addEventListener("click", function () {
+
+        surat.style.display = "none";
+
+        lembaryes.style.display = "block";
+        lembaryes.style.opacity = "0";
+        lembaryes.style.transform = "scale(0.8)";
+
+        setTimeout(function () {
+
+        lembaryes.style.transition = "all 0.8s ease";
+        lembaryes.style.opacity = "1";
+        lembaryes.style.transform = "scale(1)";
+
+            }, 50);
+
+    });
+
+        tombolNo.addEventListener("click", function () {
+
+        surat.style.display = "none";
+
+        lembarno.style.display = "block";
+        lembarno.style.opacity = "0";
+        lembarno.style.transform = "scale(0.8)";
+
+         setTimeout(function () {
+
+        lembarno.style.transition = "all 0.8s ease";
+        lembarno.style.opacity = "1";
+        lembarno.style.transform = "scale(1)";
+
+            }, 50);
+        })
+
+     
+
+    </script>
+
+</body>
+
+</html>
