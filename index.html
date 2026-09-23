@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Who?</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #ffe4ea;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .amplop {
+            width: min(300px, 85vw);
+            height: min(200px, 56.67vw);
+            background: rgb(253, 114, 137);
+            position: relative;
+            margin: 100px auto;
+            overflow: visible;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .amplop::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            border-left: calc(min(300px, 85vw) / 2) solid transparent;
+            border-right: calc(min(300px, 85vw) / 2) solid transparent;
+            border-bottom: calc(min(200px, 56.67vw) / 2) solid rgb(253, 114, 137);
+            z-index: 3;
+        }
+
+        .tutup {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: calc(min(300px, 85vw) / 2) solid transparent;
+            border-right: calc(min(300px, 85vw) / 2) solid transparent;
+            border-top: calc(min(200px, 56.67vw) / 2) solid pink;
+            z-index: 5;
+            transform-origin: top center;
+            transition: transform 0.8s ease;
+        }
+
+        .amplop.open .tutup {
+            transform: rotateX(180deg);
+        }
+
+        #hati {
+            position: absolute;
+            left: -20px;
+            bottom: -60px;
+            color: rgb(237, 30, 99);
+            font-size: clamp(28px, 10vw, 40px);
+            z-index: 10;
+        }
+
+        #buka {
+            position: absolute;
+            left: 50%;
+            top: 100px;
+            transform: translateX(-50%);
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 16px;
+            color: black;
+            background-color: pink;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            cursor: pointer;
+            z-index: 20;
+            transition: transform 0.2s ease;
+        }
+
+        #buka:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .halaman {
+            width: min(250px, 90vw);
+            height: 350px;
+            position: relative;
+            margin: 50px auto;
+            border: 1px solid black;
+            background:white;
+            overflow-y: auto;
+            display: none;
+            padding: 10px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .halaman.show {
+            display: block;
+            animation: muncul 1s ease forwards;
+        }
+
+        @keyframes muncul {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        #untuk {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            margin: 5px;
+        }
+        .isi {
+            margin: 10px;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        #lanjut {
+            padding: 10px 20px;
+            color: black;
+            background-color: rgb(255, 128, 149);
+            border: none;
+            border-radius: 5px;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .surat {
+            width: min(250px, 90vw);
+            height: 350px;
+            position: relative;
+            margin: 50px auto;
+            border: 2px solid white;
+            background: rgb(254, 134, 154);
+            overflow: hidden;
+            display: none;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .surat.show {
+            display: block;
+
+            animation: suratMuncul 0.8s ease forwards;
+        }
+
+        @keyframes suratMuncul {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #To {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 15px;
+            color: black;
+            margin-left: 10px;
+        }
+
+        #confess {
+            position: absolute;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 17px;
+            color: black;
+            top: 50px;
+            left: 30px;
+        }
+
+        #yes,
+        #no {
+            position: absolute;
+            top: 270px;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 16px;
+            color: black;
+            background-color: pink;
+            border: none;
+            border-radius: 5px;
+            padding: 15px 30px;
+            cursor: pointer;
+        }
+        #yes {
+            left: 20px;
+        }
+        #no {
+            left: 140px;
+        }
+        #gif {
+            position: absolute;
+            left: 60px;
+            bottom: 100px;
+        }
+        .lembaryes{
+        width: 250px;
+        height: 350px;
+        position: relative;
+        margin: 50px auto;
+        border: 2px solid rgb(254, 253, 253);
+        background: rgb(254, 134, 154);
+        overflow: hidden;
+        box-sizing: border-box;
+        }
+        #yeay{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 20px;
+        color: black;
+        position: relative;
+        left: 22px;
+        top: 15px;
+        }
+        #bahagia{
+        position: relative;
+        left: 42px;
+        top: 20px;
+        }
+        #lopyu{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        position: relative;
+        top: -5px;
+        left: 11px;
+        font-size: 25px;
+        }
+        .lembarno{
+        width: 250px;
+        height: 350px;
+        position: relative;
+        margin: 50px auto;
+        border: 2px solid rgb(254, 253, 253);
+        background: rgb(254, 134, 154);
+        overflow: hidden;
+        box-sizing: border-box;
+        }
+        #yahh{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 20px;
+        color: black;
+        position: relative;
+        left: 26px;
+        top: 15px;
+        }
+        #sedih{
+        position: relative;
+        left: 42px;
+        top: 20px;
+        }
+        #nanges{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        position: relative;
+        top: -5px;
+        left: 27px;
+        font-size: 25px;
+        }
+        .halamansure{
+        width: 170px;
+        height: 200px;
+        position: relative;
+        background-color: pink;
+        margin: 50px auto;
+        border: 2px solid white;
+        }
+        #yessure,
+        #nosure{
+        position: absolute;
+        color: black;
+        top: 150px;
+        padding: 10px 7px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        background-color: rgb(255, 120, 142);
+
+        }
+        #sure{
+        position: absolute;
+        font-size: 16px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        left: 30px;
+        }
+        #hope{
+        position: absolute;
+        top: 60px;
+        left: 50px;
+        }
+
+        #yessure{
+        left: 10px;
+        }
+        #nosure{
+        left: 92px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+    <div class="amplop" id="amplop">
+
+        <div class="tutup">
+
+            <p id="hati">❤︎</p>
+
+            <button id="buka">
+                Open
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="halaman" id="halaman">
+
+        <p id="untuk">
+            To: Cori
+        </p>
+
+        <div class="isi">
+
+            <p>
+                Hai cori Aku sebenarnya gabisa merangkai kata-kata, 
+                tapi kali ini aku mau jujur tentang apa yang selama ini aku rasakan.
+                Cori saat aku pertama bertemu dengan mu di kelas 7 aku langsung
+                jatuh cinta padamu.
+
+                <br><br>
+
+                Perlu 5 tahun bagiku untuk memberanikan menuliskan surat ini.
+                Ku harap semua isi hati ku dapat ku tulis di dalam surat ini.
+
+                <br><br>
+
+                cori aku mennyukaimu sejak kita berada kelas 7 hingga aku duduk di kelas 11 ini
+                tapi saat kita ada di kelas 9 ad sesuatu yang membuatku menghindar dan menjauh darimu
+                karena aku merasa tidak enak padamu dan tidak cocok untukmu
+
+                <br><br>
+
+                Itulah yang membuatku menghindar atau pergi saat ada kau di
+                dekatku.
+
+                <br><br>
+
+                kali ini aku akan mengatakan perasaan ku yg sebenarnya kepadamu kalau 
+                aku sebenarnya mencintaimu.
+
+                <br><br>
+
+                Aku memutuskan membuat web ini untuk menyatakan perasaan yang telah
+                lama ku pendam.
+
+                <br><br>
+
+                Aku memilih membuat web ini untuk menyatakan rsa cintaku karena aku berpikir lebih baik 
+                jika aku menyatakan perasaan ku padamu dalam bentuk hobiku saja karena aku 
+                bingung mau lewat mana lagi.
+
+                <br><br>
+
+                Web ini ku buat dengan penuh rasa cinta. bukan cuman sekedar
+                template atau meminta bantuan AI karena aku ingin menyampaikan
+                perasaan cintaku secara murni.
+
+                <br><br>
+
+                Web ini kubuat untuk menyatakan rasa cintaku kepadamu dan
+                meminta maaf pada mu atas apa yang terjadi saat kelas 9 dulu.
+
+                <br><br>
+
+                Aku masih merasa tidak enak kepadamu karena aku menyimpan
+                banyak foto mu dari screenshot story sampai foto kelas yang ku
+                crop sampai tersisa wajahmu saja.
+
+
+                <br><br>
+
+                Aku menyimpan foto-foto mu karena tiap aku melihat
+                senyummu aku selalu merasa bahagia saat melihat wajah cori yg cantik, imut dan lucu
+                dari pada hilang karena massa storymu habis jadi aku screenshot
+                aku tau itu salah karena aku mengambil foto foto mu dan menyimpannya tanpa izin kamu
+                aku ingin meinta maaf kepadamu dan ku harap kau bisa memafkan aku.
+
+                <br><br>
+
+                Maaf yaa.
+
+                <br><br>
+
+                Sepertinya itu saja yang ingin aku ucapkan.
+
+                <br><br>
+
+                Semoga kau suka dengan web buatan ku.
+
+                <br><br>
+
+                Kalau bisa suka sama yang buatnya juga yaaa.
+
+                <br><br>
+
+                Ada satu hal yang ingin aku tanyakan padamu.
+
+                <br><br>
+
+                Coba kamu tekan lanjut di bawah.
+
+            </p>
+            <button id="lanjut">Lanjut</button>
+        </div>
+    </div>
+
+
+    <div class="surat" id="surat">
+
+        <p id="To">
+            To: Cori
+        </p>
+
+        <p id="confess">
+            Cori Do you Love me too?
+        </p>
+
+        <button id="yes">
+            Yes
+        </button>
+
+        <button id="no">
+            No
+        </button>
+
+        <div id="gif">
+            <img src="gif.gif" alt="lopyu" width="130">
+        </div>
+
+    </div>
+    <div class="lembaryes">
+        <div>
+            <p id="yeay">Yeayy aku di terima coriii</p>
+            <div id="bahagia">
+                <img src="bahagia.gif" alt="bahagia" width="160">
+                <div>
+                    <p id="lopyu">Lopyu corii❤️</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="lembarno">
+        <div>
+            <p id="yahh">yahh aku di tolak cori ;) </p>
+            <div id="sedih">
+                <img src="sedih.gif" alt="sedih" width="160">
+                <div>
+                    <p id="nanges">huhuhu 😭</p>
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="halamansure">
+        <div>
+            <p id="sure">Are you sure?😞</p>
+        </div>
+            <div>
+                <img id="hope" src="hope.gif" alt="plis" width="65">
+                <div>
+                    <button id="yessure">Yes(sure)</button>
+                </div>
+                <div>
+                    <button id="nosure">No(back)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const amplop = document.getElementById("amplop");
+        const tombolBuka = document.getElementById("buka");
+        const halaman = document.getElementById("halaman");
+        const tombolLanjut = document.getElementById("lanjut");
+        const surat = document.getElementById("surat");
+        const lembaryes = document.querySelector(".lembaryes");
+        const lembarno = document.querySelector(".lembarno");
+        const tombolYes = document.getElementById("yes");
+        const tombolNo = document.getElementById("no");
+        const tombolyessure = document.getElementById("yessure");
+        const tombolnossure = document.getElementById("nosure");
+        const lembarsure = document.querySelector(".halamansure");
+
+        tombolBuka.addEventListener("click", function () {
+
+            amplop.classList.add("open");
+
+            tombolBuka.style.opacity = "0";
+            tombolBuka.style.pointerEvents = "none";
+
+            setTimeout(function () {
+
+                amplop.style.display = "none";
+                halaman.classList.add("show");
+
+            }, 1000);
+
+        });
+
+        tombolLanjut.addEventListener("click", function () {
+
+            halaman.style.display = "none";
+
+            surat.classList.add("show");
+
+        });
+
+        lembaryes.style.display = "none";
+        lembarno.style.display = "none";
+        lembarsure.style.display = "none";
+
+        tombolYes.addEventListener("click", function () {
+
+        surat.style.display = "none";
+
+        lembaryes.style.display = "block";
+        lembaryes.style.opacity = "0";
+        lembaryes.style.transform = "scale(0.8)";
+
+        setTimeout(function () {
+
+        lembaryes.style.transition = "all 0.8s ease";
+        lembaryes.style.opacity = "1";
+        lembaryes.style.transform = "scale(1)";
+
+            }, 50);
+
+    });
+
+        tombolNo.addEventListener("click", function () {
+
+        surat.style.display = "none";
+
+        lembarsure.style.display = "block";
+        lembarsure.style.opacity = "0";
+        lembarsure.style.transform = "scale(0.8)";
+
+         setTimeout(function () {
+
+        lembarsure.style.transition = "all 0.8s ease";
+        lembarsure.style.opacity = "1";
+        lembarsure.style.transform = "scale(1)";
+
+            }, 50);
+    });
+
+        tombolnossure.addEventListener("click", function () {
+        lembarsure.style.display = "none";
+
+        surat.style.display = "block";
+        surat.style.opacity = "0";
+        surat.style.transform = "scale(0.8)";
+
+        setTimeout(function () {
+
+        surat.style.transition = "all 0.8s ease";
+        surat.style.opacity = "1";
+        surat.style.transform = "scale(1)";
+
+            }, 50);
+        });
+
+        tombolyessure.addEventListener("click",function(){
+        lembarsure.style.display = "none";
+
+        lembarno.style.display = "block";
+        lembarno.style.opacity = "0";
+        lembarno.style.transform = "scale(0.8)";
+
+        setTimeout(function () {
+
+        lembarno.style.transition = "all 0.8s ease";
+        lembarno.style.opacity = "1";
+        lembarno.style.transform = "scale(1)";
+
+            }, 50);
+        })
+
+     
+
+    </script>
+
+</body>
+
+</html>
