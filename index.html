@@ -1,0 +1,2905 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>To cori</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden
+}
+
+body{
+  font-family:Georgia,"Times New Roman",serif;
+  color:#38291d;
+  background:#b9e4e8;
+  user-select:none;
+  -webkit-user-select:none
+}
+
+#game{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  touch-action:none;
+  isolation:isolate
+}
+
+
+/* =========================================================
+   BACKGROUND PERKEBUNAN
+========================================================= */
+
+.sky{
+  position:absolute;
+  inset:0 0 43%;
+  background:linear-gradient(#a8dce7,#d9f0e9);
+  z-index:-10
+}
+
+.sun{
+  position:absolute;
+  right:9%;
+  top:8%;
+  width:105px;
+  height:105px;
+  border-radius:50%;
+  background:#ffe7a4;
+  box-shadow:0 0 45px #fff0b080
+}
+
+.hill{
+  position:absolute;
+  left:-15%;
+  bottom:38%;
+  width:80%;
+  height:28%;
+  background:#789c5e;
+  border-radius:55% 55% 0 0;
+  z-index:-7
+}
+
+.hill2{
+  position:absolute;
+  right:-20%;
+  bottom:39%;
+  width:75%;
+  height:25%;
+  background:#688b55;
+  border-radius:55% 55% 0 0;
+  z-index:-8
+}
+
+.ground{
+  position:absolute;
+  left:-8%;
+  right:-8%;
+  bottom:-15%;
+  height:61%;
+  background:linear-gradient(165deg,#789f5c,#4d7748);
+  border-radius:50% 50% 0 0;
+  z-index:-5
+}
+
+.path{
+  position:absolute;
+  left:34%;
+  bottom:-18%;
+  width:31%;
+  height:62%;
+  background:#c6a36b;
+  border-radius:50% 50% 0 0;
+  transform:rotate(-5deg);
+  opacity:.8;
+  z-index:-4
+}
+
+
+/* =========================================================
+   PAGAR
+========================================================= */
+
+.fence{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:40%;
+  height:72px;
+  z-index:-2;
+  opacity:.9
+}
+
+.fence:before,
+.fence:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  height:12px;
+  background:#795535;
+  box-shadow:0 22px #795535
+}
+
+.fence:before{
+  top:25px
+}
+
+.fence:after{
+  top:47px
+}
+
+.post{
+  position:absolute;
+  top:0;
+  width:17px;
+  height:78px;
+  background:#69472e;
+  border-radius:5px
+}
+
+.post:nth-child(1){left:5%}
+.post:nth-child(2){left:18%}
+.post:nth-child(3){left:31%}
+.post:nth-child(4){left:44%}
+.post:nth-child(5){left:57%}
+.post:nth-child(6){left:70%}
+.post:nth-child(7){left:83%}
+.post:nth-child(8){left:96%}
+
+
+/* =========================================================
+   UI
+========================================================= */
+
+.ui{
+  position:absolute;
+  z-index:80;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(94%,690px);
+  display:flex;
+  justify-content:space-between;
+  gap:10px
+}
+
+.card{
+  background:#fff8e8eb;
+  border:2px solid #000000;
+  border-radius:17px;
+  padding:10px 16px;
+  box-shadow:0 7px 22px #323f2520;
+  backdrop-filter:blur(5px)
+}
+
+.counter{
+  font-size:14px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  white-space:nowrap
+}
+
+.counter b{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size:21px
+}
+
+.flower{
+  position:absolute;
+  width:78px;
+  height:128px;
+  z-index:20;
+  cursor:grab;
+  touch-action:none;
+  transform-origin:50% 100%;
+  animation:sway 4.5s ease-in-out infinite;
+  transition:filter .18s
+}
+
+.flower:active{
+  cursor:grabbing
+}
+
+.flower:hover{
+  filter:brightness(1.06)
+}
+
+@keyframes sway{
+  0%,100%{
+    transform:rotate(-1.2deg)
+  }
+
+  50%{
+    transform:rotate(1.5deg)
+  }
+}
+
+.flower.dragging{
+  z-index:70;
+  animation:none;
+  cursor:grabbing;
+  filter:drop-shadow(0 15px 10px #26361e55)
+}
+
+.flower.returning{
+  transition:transform .42s cubic-bezier(.2,.8,.25,1)
+}
+
+.flower.plucked{
+  pointer-events:none;
+  animation:none;
+  transition:
+    transform .45s cubic-bezier(.2,.8,.25,1),
+    opacity .45s;
+  opacity:0
+}
+
+
+/* =========================================================
+   BATANG DAN DAUN
+========================================================= */
+
+.stem{
+  position:absolute;
+  bottom:0;
+  left:36px;
+  width:6px;
+  height:92px;
+  background:linear-gradient(90deg,#355c35,#75a452);
+  border-radius:9px
+}
+
+.leaf{
+  position:absolute;
+  width:35px;
+  height:17px;
+  bottom:31px;
+  left:9px;
+  background:linear-gradient(135deg,#548d43,#376a39);
+  border-radius:100% 0 100% 0;
+  transform:rotate(-22deg)
+}
+
+.leaf.r{
+  left:40px;
+  bottom:48px;
+  transform:scaleX(-1) rotate(-22deg)
+}
+
+
+/* =========================================================
+   KEPALA BUNGA
+========================================================= */
+
+.flower-head{
+  position:absolute;
+  top:1px;
+  left:9px;
+  width:60px;
+  height:60px;
+  z-index:2
+}
+
+.petal{
+  position:absolute;
+  left:16px;
+  top:7px;
+  width:27px;
+  height:39px;
+  border-radius:55% 55% 45% 45%;
+  transform-origin:50% 88%;
+  box-shadow:inset 0 2px 4px #fff4
+}
+
+.petal:nth-child(1){transform:rotate(0)}
+.petal:nth-child(2){transform:rotate(72deg)}
+.petal:nth-child(3){transform:rotate(144deg)}
+.petal:nth-child(4){transform:rotate(216deg)}
+.petal:nth-child(5){transform:rotate(288deg)}
+
+.center{
+  position:absolute;
+  left:22px;
+  top:22px;
+  width:19px;
+  height:19px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ffe08a,#bd8034);
+  border:2px solid #70491d80;
+  z-index:4
+}
+
+.pink .petal{
+  background:linear-gradient(145deg,#f6c7d8,#c46f99)
+}
+
+.yellow .petal{
+  background:linear-gradient(145deg,#ffedab,#dfa948)
+}
+
+.lilac .petal{
+  background:linear-gradient(145deg,#e1cff1,#8f72b7)
+}
+
+.red .petal{
+  background:linear-gradient(145deg,#f3aaa7,#bc5e60)
+}
+
+
+/* =========================================================
+   POSISI BUNGA
+========================================================= */
+
+.f1{
+  left:7%;
+  bottom:20%
+}
+
+.f2{
+  left:15%;
+  bottom:27%;
+  transform:scale(.86)
+}
+
+.f3{
+  left:23%;
+  bottom:15%;
+  transform:scale(.94)
+}
+
+.f4{
+  left:31%;
+  bottom:25%;
+  transform:scale(1.08)
+}
+
+.f5{
+  left:39%;
+  bottom:18%;
+  transform:scale(.78)
+}
+
+.f6{
+  left:47%;
+  bottom:27%
+}
+
+.f7{
+  left:55%;
+  bottom:17%;
+  transform:scale(.88)
+}
+
+.f8{
+  left:63%;
+  bottom:25%;
+  transform:scale(1.05)
+}
+
+.f9{
+  left:71%;
+  bottom:16%;
+  transform:scale(.8)
+}
+
+.f10{
+  left:78%;
+  bottom:28%;
+  transform:scale(.98)
+}
+
+.f11{
+  left:85%;
+  bottom:18%;
+  transform:scale(.86)
+}
+
+.f12{
+  left:91%;
+  bottom:25%;
+  transform:scale(1.02)
+}
+
+.f13{
+  left:19%;
+  bottom:12%;
+  transform:scale(.68)
+}
+
+.f14{
+  left:42%;
+  bottom:12%;
+  transform:scale(.7)
+}
+
+.f15{
+  left:68%;
+  bottom:12%;
+  transform:scale(.7)
+}
+
+
+/* =========================================================
+   KERANJANG
+========================================================= */
+
+.basket{
+  position:absolute;
+  z-index:35;
+  right:5%;
+  bottom:5%;
+  width:180px;
+  height:125px;
+  filter:drop-shadow(0 13px 7px #27321c55)
+}
+
+.handle{
+  position:absolute;
+  left:27px;
+  top:-54px;
+  width:126px;
+  height:80px;
+  border:11px solid #684323;
+  border-bottom:0;
+  border-radius:80px 80px 0 0
+}
+
+.basket-body{
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:180px;
+  height:91px;
+
+  background:
+    repeating-linear-gradient(
+      7deg,
+      transparent 0 8px,
+      #5b351d 9px 12px
+    ),
+    repeating-linear-gradient(
+      83deg,
+      #a06b3d 0 9px,
+      #704624 10px 13px
+    );
+
+  border:5px solid #58361f;
+  border-radius:13px 13px 36px 36px
+}
+
+.basket-rim{
+  position:absolute;
+  left:-3px;
+  top:2px;
+  width:186px;
+  height:19px;
+  background:#84552f;
+  border:4px solid #57361f;
+  border-radius:50%
+}
+
+.basket-flower{
+  position:absolute;
+  width:29px;
+  height:50px;
+  bottom:48px;
+  z-index:4;
+  opacity:0;
+  transform:translateY(12px) scale(.7);
+  transition:.35s
+}
+
+.basket-flower.show{
+  opacity:1;
+  transform:translateY(0) scale(1)
+}
+
+.basket-flower .stem{
+  left:13px;
+  width:4px;
+  height:42px
+}
+
+.basket-flower .head{
+  position:absolute;
+  left:0;
+  top:0;
+  width:27px;
+  height:27px;
+  border-radius:50%;
+  background:#d995b1;
+  box-shadow:
+    8px 2px #c77b99,
+    -8px 2px #efbfd0,
+    0 -8px #db8ca9,
+    0 8px #b96c8d
+}
+
+.basket-flower .center{
+  left:8px;
+  top:8px;
+  width:11px;
+  height:11px;
+  border:0
+}
+
+.bf1{left:22px}
+.bf2{left:58px}
+.bf3{left:96px}
+.bf4{left:130px}
+
+
+/* =========================================================
+   PETUNJUK
+========================================================= */
+
+.instruction{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    position:absolute;
+    z-index:90;
+    left:50%;
+    bottom:3%;
+    transform:translate(-50%,10px);
+    padding:9px 17px;
+    border-radius:14px;
+    background:#2f2b20c9;
+    color:#fff8e9;
+    font-size:15px;
+    opacity:0;
+    pointer-events:none;
+    transition:.35s;
+    white-space:nowrap
+    }
+
+.instruction.show{
+  opacity:1;
+  transform:translate(-50%,0)
+}
+
+.instruction.pulse{
+  animation:pulseHint .55s ease
+}
+
+@keyframes pulseHint{
+  50%{
+    transform:translate(-50%,0) scale(1.04)
+  }
+}
+
+
+/* =========================================================
+   AMPLOP KECIL DI KEBUN
+========================================================= */
+
+.garden-envelope{
+  position:absolute;
+  z-index:45;
+  left:48%;
+  bottom:20px;
+
+  width:68px;
+  height:46px;
+
+  transform:
+    translate(-50%,30px)
+    rotate(-7deg)
+    scale(.85);
+
+  opacity:0;
+  pointer-events:none;
+  cursor:pointer;
+
+  background:rgb(253,114,137);
+
+  border-radius:7px;
+
+  box-shadow:
+    0 7px 7px #2627164d;
+
+  transition:
+    opacity .5s ease,
+    transform .5s ease
+}
+
+.garden-envelope::before{
+  content:"";
+
+  position:absolute;
+  left:0;
+  bottom:0;
+
+  border-left:34px solid transparent;
+  border-right:34px solid transparent;
+  border-bottom:23px solid rgb(253,114,137);
+
+  z-index:3
+}
+
+.garden-envelope::after{
+  content:"";
+
+  position:absolute;
+  left:0;
+  top:0;
+
+  border-left:34px solid transparent;
+  border-right:34px solid transparent;
+  border-top:23px solid pink;
+
+  z-index:5
+}
+
+.garden-envelope.reveal{
+  opacity:1;
+  pointer-events:auto;
+
+  animation:
+    gardenEnvelopeReveal
+    .65s
+    ease
+    forwards
+}
+
+@keyframes gardenEnvelopeReveal{
+
+  0%{
+    opacity:0;
+    transform:
+      translate(-50%,20px)
+      rotate(-7deg)
+      scale(.65)
+  }
+
+  60%{
+    opacity:1;
+    transform:
+      translate(-50%,-5px)
+      rotate(-7deg)
+      scale(.92)
+  }
+
+  100%{
+    opacity:1;
+    transform:
+      translate(-50%,0)
+      rotate(-7deg)
+      scale(.85)
+  }
+
+}
+
+
+/* =========================================================
+   LAYAR AMPLOP BESAR
+========================================================= */
+
+.letter-stage{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  overflow:hidden;
+
+  background:rgba(42,50,31,.72);
+
+  backdrop-filter:blur(4px)
+}
+
+.letter-stage.show{
+  display:flex
+}
+
+
+/* =========================================================
+   AMPLOP BESAR
+   Ini mengambil desain amplop dari kode kamu.
+========================================================= */
+
+.letter-stage .amplop{
+  width:min(300px,85vw);
+  height:min(200px,56.67vw);
+
+  background:rgb(253,114,137);
+
+  position:relative;
+
+  margin:100px auto;
+
+  overflow:visible;
+
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+
+  border-radius:15px;
+
+  opacity:1;
+  pointer-events:auto
+}
+
+.letter-stage .amplop::before{
+  content:"";
+
+  position:absolute;
+
+  left:0;
+  bottom:0;
+
+  border-left:
+    calc(min(300px,85vw)/2)
+    solid transparent;
+
+  border-right:
+    calc(min(300px,85vw)/2)
+    solid transparent;
+
+  border-bottom:
+    calc(min(200px,56.67vw)/2)
+    solid rgb(253,114,137);
+
+  z-index:3;
+
+  border-radius:15px
+}
+
+.letter-stage .tutup{
+  position:absolute;
+
+  top:0;
+  left:0;
+
+  width:0;
+  height:0;
+
+  border-left:
+    calc(min(300px,85vw)/2)
+    solid transparent;
+
+  border-right:
+    calc(min(300px,85vw)/2)
+    solid transparent;
+
+  border-top:
+    calc(min(200px,56.67vw)/2)
+    solid pink;
+
+  z-index:5;
+
+  transform-origin:top center;
+
+  transition:
+    transform 0.8s ease;
+
+  border-radius:15px
+}
+
+.letter-stage .amplop.open .tutup{
+  transform:rotateX(180deg)
+}
+
+.letter-stage #hati{
+  position:absolute;
+
+  left:-20px;
+  bottom:-60px;
+
+  color:rgb(237,30,99);
+
+  font-size:clamp(28px,10vw,40px);
+
+  z-index:10
+}
+
+.letter-stage #buka{
+  position:absolute;
+
+  left:50%;
+  top:100px;
+
+  transform:translateX(-50%);
+
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  font-size:16px;
+
+  color:black;
+
+  background-color:pink;
+
+  border:none;
+
+  border-radius:8px;
+
+  padding:12px 30px;
+
+  cursor:pointer;
+
+  z-index:20;
+
+  transition:
+    transform 0.2s ease
+}
+
+.letter-stage #buka:hover{
+  transform:
+    translateX(-50%)
+    scale(1.05)
+}
+
+
+/* =========================================================
+   HALAMAN SURAT
+========================================================= */
+
+.letter-stage .halaman{
+  width:min(250px,90vw);
+  height:350px;
+
+  position:relative;
+
+  margin:50px auto;
+
+  border-radius:20px;
+
+  background:white;
+
+  overflow:hidden;
+
+  display:none;
+
+  padding:10px;
+
+  opacity:0;
+
+  transform:translateY(30px)
+}
+
+.letter-stage .halaman::before{
+  content:"";
+
+  position:absolute;
+
+  top:12px;
+  left:8px;
+  right:8px;
+  bottom:12px;
+
+  border:2px dashed pink;
+
+  border-radius:16px;
+
+  pointer-events:none;
+
+  z-index:10
+}
+
+.letter-stage .halaman.show{
+  display:block;
+
+  animation:
+    muncul
+    1s ease
+    forwards
+}
+
+@keyframes muncul{
+
+  from{
+    opacity:0;
+    transform:translateY(30px)
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0)
+  }
+
+}
+
+.letter-stage #untuk{
+  position:relative;
+
+  text-align:center;
+
+  z-index:10;
+
+  background-color:pink;
+
+  color:black;
+
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  font-size:13px;
+
+  padding:6px 14px;
+
+  border-radius:20px;
+
+  margin-bottom:20px;
+  margin-left:30px;
+  margin-right:30px
+}
+
+.letter-stage .isi{
+  justify-content:center;
+
+  width:200px;
+  height:250px;
+
+  margin-left:auto;
+  margin-right:auto;
+
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  font-size:12px;
+
+  line-height:1.5;
+
+  overflow-y:auto;
+
+  scrollbar-width:thin
+}
+
+.letter-stage #lanjut{
+  padding:10px 20px;
+
+  color:black;
+
+  background-color:rgb(255,128,149);
+
+  border-radius:20px;
+
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  font-size:16px;
+
+  cursor:pointer
+}
+
+
+/* =========================================================
+   SURAT
+========================================================= */
+
+.letter-stage .surat{
+  width:min(250px,90vw);
+  height:350px;
+
+  position:relative;
+
+  margin:50px auto;
+
+  border-radius:20px;
+
+  background: rgb(254,251,251);
+
+  overflow:hidden;
+
+  display:none;
+
+  opacity:0;
+
+  transform:scale(.8)
+}
+
+.letter-stage .surat::before{
+  content:"";
+
+  position:absolute;
+
+  top:12px;
+  left:8px;
+  right:8px;
+  bottom:12px;
+
+  border:2px dashed pink;
+
+  border-radius:16px;
+
+  pointer-events:none;
+
+  z-index:10
+}
+
+.letter-stage .surat.show{
+  display:block;
+
+  animation:
+    suratMuncul
+    .8s
+    ease
+    forwards
+}
+
+@keyframes suratMuncul{
+
+  from{
+    opacity:0;
+    transform:scale(.8)
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1)
+  }
+
+}
+
+.letter-stage #To{
+  position:absolute;
+
+  left:11px;
+  top:9px;
+
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  font-size:15px;
+
+  color:black;
+
+  margin-left:10px
+}
+
+.letter-stage #confess{
+  position:absolute;
+
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  font-size:15px;
+
+  color:black;
+
+  top:50px;
+  left:32px
+}
+
+.letter-stage #yes,
+.letter-stage #no{
+  position:absolute;
+
+  top:270px;
+
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  font-size:16px;
+
+  color:black;
+
+  background-color:rgb(255,120,142);
+
+  border:none;
+
+  border-radius:20px;
+
+  padding:15px 30px;
+
+  cursor:pointer
+}
+
+.letter-stage #yes{
+  left:30px
+}
+
+.letter-stage #no{
+  left:140px
+}
+
+.letter-stage #gif{
+  position:absolute;
+  left:60px;
+  bottom:100px
+}
+
+
+/* =========================================================
+   HASIL YES
+========================================================= */
+
+.letter-stage .lembaryes{
+  width:250px;
+  height:350px;
+
+  position:relative;
+
+  margin:50px auto;
+
+  border-radius:20px;
+
+  background: rgb(254,251,251);
+
+  overflow:hidden;
+
+  box-sizing:border-box
+}
+
+.letter-stage .lembaryes::before{
+  content:"";
+
+  position:absolute;
+
+  top:12px;
+  left:8px;
+  right:8px;
+  bottom:12px;
+
+  border:2px dashed pink;
+
+  border-radius:16px;
+
+  pointer-events:none;
+
+  z-index:10
+}
+
+.letter-stage #yeay{
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  font-size:20px;
+
+  color:black;
+
+  position:relative;
+
+  left:23px;
+  top:15px
+}
+
+.letter-stage #bahagia{
+  position:relative;
+
+  left:42px;
+  top:20px
+}
+
+.letter-stage #lopyu{
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  position:relative;
+
+  top:-5px;
+  left:11px;
+
+  font-size:25px
+}
+
+
+/* =========================================================
+   HASIL NO
+========================================================= */
+
+.letter-stage .lembarno{
+  width:250px;
+  height:350px;
+
+  position:relative;
+
+  margin:50px auto;
+
+  border-radius:20px;
+
+  background:rgb(254,251,251);
+
+  overflow:hidden;
+
+  box-sizing:border-box
+}
+
+.letter-stage .lembarno::before{
+  content:"";
+
+  position:absolute;
+
+  top:12px;
+  left:8px;
+  right:8px;
+  bottom:12px;
+
+  border:2px dashed pink;
+
+  border-radius:16px;
+
+  pointer-events:none;
+
+  z-index:10
+}
+
+.letter-stage #yahh{
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  font-size:20px;
+
+  color:black;
+
+  position:relative;
+
+  left:28px;
+  top:15px
+}
+
+.letter-stage #sedih{
+  position:relative;
+
+  left:44px;
+  top:20px
+}
+
+.letter-stage #nanges{
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  position:relative;
+
+  top:-5px;
+  left:27px;
+
+  font-size:25px
+}
+
+
+/* =========================================================
+   ARE YOU SURE
+========================================================= */
+
+.letter-stage .halamansure{
+  width:170px;
+  height:200px;
+
+  position:relative;
+
+  background-color:pink;
+
+  margin:50px auto;
+
+  border:2px solid white
+}
+
+.letter-stage #yessure,
+.letter-stage #nosure{
+  position:absolute;
+
+  color:black;
+
+  top:150px;
+
+  padding:10px 7px;
+
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  background-color:rgb(255,120,142)
+}
+
+.letter-stage #sure{
+  position:absolute;
+
+  font-size:16px;
+
+  font-family:
+    'Gill Sans',
+    'Gill Sans MT',
+    Calibri,
+    'Trebuchet MS',
+    sans-serif;
+
+  left:30px
+}
+
+.letter-stage #hope{
+  position:absolute;
+
+  top:60px;
+  left:50px
+}
+
+.letter-stage #yessure{
+  left:10px
+}
+
+.letter-stage #nosure{
+  left:92px
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:600px){
+
+  .garden-envelope{
+    width:58px;
+    height:40px
+  }
+
+  .garden-envelope::before{
+    border-left-width:29px;
+    border-right-width:29px;
+    border-bottom-width:20px
+  }
+
+  .garden-envelope::after{
+    border-left-width:29px;
+    border-right-width:29px;
+    border-top-width:20px
+  }
+
+  .title{
+    font-size:17px
+  }
+
+  .desc{
+    font-size:11px
+  }
+
+  .ui{
+    top:8px
+  }
+
+  .basket{
+    transform:scale(.78);
+    transform-origin:bottom right;
+    right:2%
+  }
+
+  .flower{
+    transform:scale(.72)!important
+  }
+
+  .f1{left:1%}
+  .f2{left:12%}
+  .f3{left:23%}
+  .f4{left:34%}
+  .f5{left:45%}
+  .f6{left:56%}
+  .f7{left:67%}
+  .f8{left:78%}
+  .f9{left:88%}
+
+  .f10,
+  .f11,
+  .f12,
+  .f13,
+  .f14,
+  .f15{
+    display:none
+  }
+
+  .instruction{
+    bottom:17%;
+    font-size:13px
+  }
+
+  .subtitle{
+    bottom:21%;
+    font-size:14px
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div id="game">
+
+
+  <!-- =====================================================
+       BACKGROUND
+  ====================================================== -->
+
+  <div class="sky"></div>
+  <div class="sun"></div>
+  <div class="hill"></div>
+  <div class="hill2"></div>
+  <div class="ground"></div>
+  <div class="path"></div>
+
+
+  <!-- =====================================================
+       PAGAR
+  ====================================================== -->
+
+  <div class="fence">
+
+    <i class="post"></i>
+    <i class="post"></i>
+    <i class="post"></i>
+    <i class="post"></i>
+    <i class="post"></i>
+    <i class="post"></i>
+    <i class="post"></i>
+    <i class="post"></i>
+
+  </div>
+
+
+  <!-- =====================================================
+       UI
+  ====================================================== -->
+
+  <div class="ui">
+    <div class="card counter">
+
+      Dipetik:
+      <b id="count">0</b>
+
+    </div>
+
+  </div>
+  <!-- =====================================================
+       KERANJANG
+  ====================================================== -->
+
+  <div class="basket" id="basket">
+
+    <div class="handle"></div>
+
+    <div class="basket-flower bf1">
+      <i class="head"></i>
+      <i class="center"></i>
+      <i class="stem"></i>
+    </div>
+
+    <div class="basket-flower bf2">
+      <i class="head"></i>
+      <i class="center"></i>
+      <i class="stem"></i>
+    </div>
+
+    <div class="basket-flower bf3">
+      <i class="head"></i>
+      <i class="center"></i>
+      <i class="stem"></i>
+    </div>
+
+    <div class="basket-flower bf4">
+      <i class="head"></i>
+      <i class="center"></i>
+      <i class="stem"></i>
+    </div>
+
+    <div class="basket-body"></div>
+    <div class="basket-rim"></div>
+
+  </div>
+
+
+  <!-- =====================================================
+       BUNGA-BUNGA
+  ====================================================== -->
+
+  <div class="flower pink f1" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower yellow f2" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower lilac f3" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower red f4" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower yellow f5" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower pink f6" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower lilac f7" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower red f8" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower pink f9" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower yellow f10" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower lilac f11" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower red f12" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower yellow f13" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower pink f14" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+  <div class="flower red f15" data-flower>
+    <div class="flower-head">
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="center"></i>
+    </div>
+    <i class="leaf"></i>
+    <i class="leaf r"></i>
+    <i class="stem"></i>
+  </div>
+
+
+  <!-- =====================================================
+       AMPLOP KECIL DI KEBUN
+  ====================================================== -->
+
+  <div
+    class="garden-envelope"
+    id="gardenEnvelope"
+    aria-label="Amplop"
+  ></div>
+
+
+  <div
+    class="instruction"
+    id="instruction"
+  >
+    Geser atau cabut bunga ke arah keranjang
+  </div>
+
+
+  <div
+    class="subtitle"
+    id="subtitle"
+  ></div>
+
+
+  <!-- =====================================================
+       LAYAR AMPLOP BESAR + SURAT
+  ====================================================== -->
+
+  <div
+    class="letter-stage"
+    id="letterStage"
+  >
+
+    <!-- AMPLOP DARI KODE KAMU -->
+
+    <div
+      class="amplop"
+      id="amplop"
+    >
+
+      <div class="tutup">
+
+        <p id="hati">
+          ❤︎
+        </p>
+
+        <button id="buka">
+          Open
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         HALAMAN SURAT
+    ==================================================== -->
+
+    <div
+      class="halaman"
+      id="halaman"
+    >
+
+      <p id="untuk">
+        <span>💌</span>
+        dari drajad untuk cori
+      </p>
+
+      <div class="isi">
+
+        <p>
+
+          Hai cori, surat ini aku tujukan untuk mu aku engga tau kamu suka sama web
+          buatan aku ini atau malah langsung menutupnya.
+          tapi kali ini aku mau mencoba menyampaikan perasaan ku di web ini.
+
+          <br><br>
+
+          kau mungkin sudah tau kalau aku suka sama kamu.
+          mungkin kamu juga sadar selama ini setiap kita bertemu aku selalu menghindar, pergi atau cuman diam
+          dan pura pura biasa aja padahal seneng bangettt itu bukan karena aku sombong atau tidak suka berada di dekat mu tapi
+          setiap aku bertemu dengan mu entah kenapa jantungku berdebar kencang sehingga aku tidak bisa bereaksi natural.
+
+          <br><br>
+
+          selain merasa malu jika ada di dekat mu aku juga sadar kalo aku tidak pantas untuk mu, aku hanya
+          seseorang yang bodoh tidak punya keahlian pemalas dan orang yang meghalalkan segala cara agar mendapat
+          nilai yang bagus.
+
+          <br><br>
+
+          aku berkata pada diriku sendiri "jika aku seseorang yang bodoh apakah cori mau bersama ku?"
+          hal itulah yang membuatku lebih rajin belajar dan merubah ku dari pribadi yang buruk menjadi lebih baik
+          karena apa yang mau ku banggakan jika aku tidak punya keahlian dan apa yang membuatku merasa pantas
+          untuk cori jika aku tidak merubah diriku aku hanya membuatnya malu karena ada seseorang bodoh yang mendekatinya.
+
+          <br><br>
+
+          perlu waktu yang lumayan lama untuk aku memberanikan diri menuliskan surat dan membuat web ini dan
+          setelah membuatnya entah kapan aku akan mengirimkannya kepadamu.
+
+          <br><br>
+
+          aku ga tau sebenarnya apa yang kamu pikir tentang aku selama ini kamu juga pasti sudah tau tentang
+          perasaan ku ini dari dulu,mungkin kamu cuman menganggapnya biasa aja.
+
+          <br><br>
+
+          tapi aku masih menyukaimu mulai dari wajah mu yang cantik dan lucu hiingga kepribadian mu aku menyukai mu cori, aku mencintaimu.
+          maaf kalau selama ini aku membuat mu risih dan terganggu aku hanya ingin menyampaikan perasaan cinta ku kepadamu
+          maaf kan aku jika jatuh cintaku membuatmu terganggu.
+
+          <br><br>
+
+          aku membuat web ini hanya untuk menyampaikan perasaan cinta yang telah ku pendam sejak lama.
+
+          <br><br>
+
+          Sepertinya itu saja perasaan yang ingin aku sampaikan padamu.
+
+          <br><br>
+
+          Semoga kau suka dengan web buatan ku.
+
+          <br><br>
+
+          Kalau bisa suka sama yang buatnya juga yaaa.
+
+          <br><br>
+
+          dan ada satu hal yang ingin aku tanyakan padamu.
+
+          <br><br>
+
+        </p>
+
+        <button id="lanjut">
+          Lanjut
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         SURAT
+    ==================================================== -->
+
+    <div
+      class="surat"
+      id="surat"
+    >
+
+      <p id="To">
+        To: Cori
+      </p>
+
+      <p id="confess">
+        Cori will you be my girlfriend?
+      </p>
+
+      <button id="yes">
+        Yes
+      </button>
+
+      <button id="no">
+        No
+      </button>
+
+      <div id="gif">
+        <img
+          src="gif.gif"
+          alt="lopyu"
+          width="130"
+        >
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         HASIL YES
+    ==================================================== -->
+
+    <div class="lembaryes">
+
+      <div>
+
+        <p id="yeay">
+          Yeayy aku di terima coriii
+        </p>
+
+        <div id="bahagia">
+
+          <img
+            src="bahagia.gif"
+            alt="bahagia"
+            width="160"
+          >
+
+          <div>
+
+            <p id="lopyu">
+              Lopyu corii❤️
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         HASIL NO
+    ==================================================== -->
+
+    <div class="lembarno">
+
+      <div>
+
+        <p id="yahh">
+          yahh aku di tolak cori ;)
+        </p>
+
+        <div id="sedih">
+
+          <img
+            src="sedih.gif"
+            alt="sedih"
+            width="160"
+          >
+
+          <div>
+
+            <p id="nanges">
+              huhuhu 😭
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         ARE YOU SURE
+    ==================================================== -->
+
+    <div class="halamansure">
+
+      <div>
+
+        <p id="sure">
+          Are you sure?😞
+        </p>
+
+      </div>
+
+      <div>
+
+        <img
+          id="hope"
+          src="hope.gif"
+          alt="plis"
+          width="65"
+        >
+
+        <div>
+
+          <button id="yessure">
+            Yes(sure)
+          </button>
+
+        </div>
+
+        <div>
+
+          <button id="nosure">
+            No(back)
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   BASE GAME
+   Mekanik bunga dan keranjang.
+========================================================= */
+
+const basket =
+  document.getElementById("basket");
+
+const flowers =
+  [...document.querySelectorAll("[data-flower]")];
+
+const countEl =
+  document.getElementById("count");
+
+const instruction =
+  document.getElementById("instruction");
+
+const subtitle =
+  document.getElementById("subtitle");
+
+
+let picked = 0;
+
+let dragging = null;
+
+let pointerId = null;
+
+let startX = 0;
+let startY = 0;
+
+let originLeft = 0;
+let originTop = 0;
+
+let moved = false;
+
+let hintShown = false;
+
+let envelopeRevealed = false;
+
+
+/* =========================================================
+   RANDOM TARGET AMPLOP
+   Muncul setelah 2-7 bunga berhasil masuk.
+========================================================= */
+
+const revealTarget =
+  Math.floor(Math.random() * 6) + 2;
+
+
+/* =========================================================
+   NOTIFIKASI
+========================================================= */
+
+function showInstruction(text){
+
+  instruction.textContent =
+    text;
+
+  instruction.classList.add(
+    "show"
+  );
+
+  instruction.classList.remove(
+    "pulse"
+  );
+
+  void instruction.offsetWidth;
+
+  instruction.classList.add(
+    "pulse"
+  );
+
+  setTimeout(
+    () =>
+      instruction.classList.remove(
+        "show"
+      ),
+    2600
+  );
+
+}
+
+
+/* =========================================================
+   DRAG BUNGA
+========================================================= */
+
+flowers.forEach((flower) => {
+
+
+  flower.addEventListener(
+    "pointerdown",
+    (e) => {
+
+      if(
+        flower.classList.contains(
+          "plucked"
+        )
+      ){
+        return;
+      }
+
+
+      e.preventDefault();
+
+
+      pointerId =
+        e.pointerId;
+
+      dragging =
+        flower;
+
+      moved =
+        false;
+
+
+      const r =
+        flower.getBoundingClientRect();
+
+
+      originLeft =
+        r.left;
+
+      originTop =
+        r.top;
+
+
+      startX =
+        e.clientX;
+
+      startY =
+        e.clientY;
+
+
+      flower.setPointerCapture(
+        pointerId
+      );
+
+
+      flower.classList.add(
+        "dragging"
+      );
+
+
+      if(!hintShown){
+
+        hintShown =
+          true;
+
+        showInstruction(
+          "Tarik bunga menuju keranjang"
+        );
+
+      }
+
+    }
+  );
+
+
+  flower.addEventListener(
+    "pointermove",
+    (e) => {
+
+      if(
+        dragging !== flower ||
+        e.pointerId !== pointerId
+      ){
+        return;
+      }
+
+
+      const dx =
+        e.clientX -
+        startX;
+
+      const dy =
+        e.clientY -
+        startY;
+
+
+      if(
+        Math.abs(dx) +
+        Math.abs(dy) > 8
+      ){
+
+        moved =
+          true;
+
+      }
+
+
+      flower.style.position =
+        "fixed";
+
+      flower.style.left =
+        (originLeft + dx) +
+        "px";
+
+      flower.style.top =
+        (originTop + dy) +
+        "px";
+
+      flower.style.margin =
+        "0";
+
+    }
+  );
+
+
+  flower.addEventListener(
+    "pointerup",
+    (e) => {
+
+      if(
+        dragging !== flower ||
+        e.pointerId !== pointerId
+      ){
+        return;
+      }
+
+
+      const r =
+        flower.getBoundingClientRect();
+
+      const b =
+        basket.getBoundingClientRect();
+
+
+      const flowerCX =
+        r.left +
+        r.width / 2;
+
+      const flowerCY =
+        r.top +
+        r.height / 2;
+
+
+      const basketCX =
+        b.left +
+        b.width / 2;
+
+      const basketCY =
+        b.top +
+        b.height / 2;
+
+
+      const distance =
+        Math.hypot(
+          flowerCX -
+          basketCX,
+
+          flowerCY -
+          basketCY
+        );
+
+
+      flower.releasePointerCapture(
+        pointerId
+      );
+
+
+      if(
+        distance <
+        Math.max(
+          125,
+          b.width * .75
+        )
+      ){
+
+        putIntoBasket(
+          flower
+        );
+
+      }
+
+      else if(!moved){
+
+        resetFlower(
+          flower
+        );
+
+        showInstruction(
+          "Geser atau cabut bunga ke arah keranjang"
+        );
+
+      }
+
+      else{
+
+        resetFlower(
+          flower
+        );
+
+      }
+
+
+      dragging =
+        null;
+
+      pointerId =
+        null;
+
+    }
+  );
+
+
+  flower.addEventListener(
+    "pointercancel",
+    () => {
+
+      if(
+        dragging === flower
+      ){
+
+        resetFlower(
+          flower
+        );
+
+      }
+
+      dragging =
+        null;
+
+      pointerId =
+        null;
+
+    }
+  );
+
+});
+
+
+/* =========================================================
+   RESET BUNGA
+========================================================= */
+
+function resetFlower(flower){
+
+  flower.classList.remove(
+    "dragging"
+  );
+
+  flower.classList.add(
+    "returning"
+  );
+
+
+  flower.style.position =
+    "";
+
+  flower.style.left =
+    "";
+
+  flower.style.top =
+    "";
+
+  flower.style.margin =
+    "";
+
+
+  setTimeout(
+    () =>
+      flower.classList.remove(
+        "returning"
+      ),
+    450
+  );
+
+}
+
+
+/* =========================================================
+   BUNGA MASUK KERANJANG
+========================================================= */
+
+function putIntoBasket(flower){
+
+  flower.classList.remove(
+    "dragging"
+  );
+
+  flower.classList.add(
+    "plucked"
+  );
+
+
+  picked++;
+
+  countEl.textContent =
+    picked;
+
+
+  const slot =
+    ((picked - 1) % 4) + 1;
+
+
+  const basketFlower =
+    basket.querySelector(
+      ".bf" + slot
+    );
+
+
+  basketFlower.classList.add(
+    "show"
+  );
+
+
+  /* =======================================================
+     AMPLOP MUNCUL RANDOM
+  ======================================================= */
+
+  if(
+    picked >= revealTarget &&
+    !envelopeRevealed
+  ){
+
+    envelopeRevealed =
+      true;
+
+
+    setTimeout(
+      () => {
+
+        gardenEnvelope.classList.add(
+          "reveal"
+        );
+
+         showInstruction(
+          "Kamu menemukan sesuatu di bebungaan"
+        );
+        subtitle.classList.add(
+          "show"
+        );
+
+
+        setTimeout(
+          () => {
+
+            subtitle.classList.remove(
+              "show"
+            );
+
+          },
+          3000
+        );
+
+
+      },
+      350
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   AMPLOP KECIL
+========================================================= */
+
+const gardenEnvelope =
+  document.getElementById(
+    "gardenEnvelope"
+  );
+
+
+const letterStage =
+  document.getElementById(
+    "letterStage"
+  );
+
+
+/*
+   Klik amplop kecil.
+   Setelah diklik, amplop besar tampil di layar.
+*/
+
+gardenEnvelope.addEventListener(
+  "click",
+  function(){
+
+    gardenEnvelope.style.display =
+      "none";
+
+
+    subtitle.classList.remove(
+      "show"
+    );
+
+
+    letterStage.classList.add(
+      "show"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   KODE AMPLOP + SURAT KAMU
+========================================================= */
+
+const amplop =
+  document.getElementById(
+    "amplop"
+  );
+
+
+const tombolBuka =
+  document.getElementById(
+    "buka"
+  );
+
+
+const halaman =
+  document.getElementById(
+    "halaman"
+  );
+
+
+const tombolLanjut =
+  document.getElementById(
+    "lanjut"
+  );
+
+
+const surat =
+  document.getElementById(
+    "surat"
+  );
+
+
+const lembaryes =
+  document.querySelector(
+    ".lembaryes"
+  );
+
+
+const lembarno =
+  document.querySelector(
+    ".lembarno"
+  );
+
+
+const tombolYes =
+  document.getElementById(
+    "yes"
+  );
+
+
+const tombolNo =
+  document.getElementById(
+    "no"
+  );
+
+
+const tombolyessure =
+  document.getElementById(
+    "yessure"
+  );
+
+
+const tombolnossure =
+  document.getElementById(
+    "nosure"
+  );
+
+
+const lembarsure =
+  document.querySelector(
+    ".halamansure"
+  );
+
+
+/*
+   URL Google Apps Script dari kode kamu.
+*/
+
+const scriptURL =
+  "https://script.google.com/macros/s/AKfycbwOtsFay10WZ3NvRrdwrG8v1ZnPAll3dT9C55fIoB7xbzZp9PgL23Wsr2IW3xsxJXNYqw/exec";
+
+
+/* =========================================================
+   OPEN AMPLOP
+========================================================= */
+
+tombolBuka.addEventListener(
+  "click",
+  function(){
+
+    amplop.classList.add(
+      "open"
+    );
+
+
+    tombolBuka.style.opacity =
+      "0";
+
+
+    tombolBuka.style.pointerEvents =
+      "none";
+
+
+    setTimeout(
+      function(){
+
+        amplop.style.display =
+          "none";
+
+
+        halaman.classList.add(
+          "show"
+        );
+
+      },
+      1000
+    );
+
+  }
+);
+
+
+/* =========================================================
+   LANJUT KE SURAT
+========================================================= */
+
+tombolLanjut.addEventListener(
+  "click",
+  function(){
+
+    halaman.style.display =
+      "none";
+
+
+    surat.classList.add(
+      "show"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   RESET HALAMAN HASIL
+========================================================= */
+
+lembaryes.style.display =
+  "none";
+
+lembarno.style.display =
+  "none";
+
+lembarsure.style.display =
+  "none";
+
+
+/* =========================================================
+   YES
+========================================================= */
+
+tombolYes.addEventListener(
+  "click",
+  function(){
+
+    fetch(
+      scriptURL +
+      "?jawaban=diterima cori"
+    );
+
+
+    surat.style.display =
+      "none";
+
+
+    lembaryes.style.display =
+      "block";
+
+
+    lembaryes.style.opacity =
+      "0";
+
+
+    lembaryes.style.transform =
+      "scale(0.8)";
+
+
+    setTimeout(
+      function(){
+
+        lembaryes.style.transition =
+          "all 0.8s ease";
+
+        lembaryes.style.opacity =
+          "1";
+
+        lembaryes.style.transform =
+          "scale(1)";
+
+      },
+      50
+    );
+
+  }
+);
+
+
+/* =========================================================
+   NO
+========================================================= */
+
+tombolNo.addEventListener(
+  "click",
+  function(){
+
+    surat.style.display =
+      "none";
+
+
+    lembarsure.style.display =
+      "block";
+
+
+    lembarsure.style.opacity =
+      "0";
+
+
+    lembarsure.style.transform =
+      "scale(0.8)";
+
+
+    setTimeout(
+      function(){
+
+        lembarsure.style.transition =
+          "all 0.8s ease";
+
+        lembarsure.style.opacity =
+          "1";
+
+        lembarsure.style.transform =
+          "scale(1)";
+
+      },
+      50
+    );
+
+  }
+);
+
+
+/* =========================================================
+   NO -> KEMBALI
+========================================================= */
+
+tombolnossure.addEventListener(
+  "click",
+  function(){
+
+    lembarsure.style.display =
+      "none";
+
+
+    surat.style.display =
+      "block";
+
+
+    surat.style.opacity =
+      "0";
+
+
+    surat.style.transform =
+      "scale(0.8)";
+
+
+    setTimeout(
+      function(){
+
+        surat.style.transition =
+          "all 0.8s ease";
+
+        surat.style.opacity =
+          "1";
+
+        surat.style.transform =
+          "scale(1)";
+
+      },
+      50
+    );
+
+  }
+);
+
+
+/* =========================================================
+   YES (SURE)
+========================================================= */
+
+tombolyessure.addEventListener(
+  "click",
+  function(){
+
+    fetch(
+      scriptURL +
+      "?jawaban=ditolak cori"
+    );
+
+
+    lembarsure.style.display =
+      "none";
+
+    lembarno.style.display =
+      "block";
+
+    lembarno.style.opacity =
+      "0";
+
+    lembarno.style.transform =
+      "scale(0.8)";
+
+
+    setTimeout(
+      function(){
+        lembarno.style.transition =
+          "all 0.8s ease";
+        lembarno.style.opacity =
+          "1";
+        lembarno.style.transform =
+          "scale(1)";
+
+      },
+      50
+    );
+
+  }
+);
+
+setTimeout(
+  () =>
+    showInstruction(
+      "Geser atau cabut bunga ke arah keranjang"
+    ),
+  900
+);
+
+</script>
+
+</body>
+</html>
